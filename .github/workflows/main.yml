@@ -9,10 +9,10 @@ on:
       - main
 
 jobs:
-  setup:
+  test-accessibility:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout code 1
         uses: actions/checkout@v4
         
       - name: Install Node.js
@@ -20,17 +20,21 @@ jobs:
         with:
           node-version: '20'
         
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./
+      - name: Install axe-core-cli
+        run: npm install -g @axe-core/cli
 
-  test-accessibility:
+      - name: Run axe accessibility tests
+        run: axe ./ --exit
+
+  deploy:
       runs-on: ubuntu-latest
+      needs: test-accessibility
       steps:
-        - name: Install axe-core-cli
-          run: npm install -g @axe-core/cli
-
-        - name: Run axe accessibility tests
-          run: axe ./ --exit
+        - name: Checkout code 2
+          uses: actions/checkout@v4
+          
+        - name: Deploy to GitHub Pages
+          uses: peaceiris/actions-gh-pages@v4
+          with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            publish_dir: ./
