@@ -6,8 +6,16 @@ on:
       - main
 
 jobs:
-  hello-world:
+  test-accessibility:
     runs-on: ubuntu-latest
     steps:
-      - name: Print Hello
-        run: echo "Hello world!"
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install axe-core-cli
+        run: npm install -g @axe-core/cli
